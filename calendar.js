@@ -283,24 +283,46 @@
      available inside the full Calendar module. */
   function renderDashboardTodayCalendarInto(target) {
     if (!target) return;
-    if (typeof window.renderCalendarModuleInto === 'function') {
-      window.renderCalendarModuleInto(target);
-      setTimeout(function () {
-        try {
-          var root = target.querySelector('.court-calendar-layout');
-          if (!root) return;
-          var summary = root.querySelector('.calendar-summary');
-          var details = root.querySelector('.next-cases-card');
-          if (summary) summary.remove();
-          if (details) details.remove();
-          root.style.display = 'block';
-          var card = root.querySelector('.court-calendar-card');
-          if (card) card.style.width = '100%';
-          var main = root.querySelector('.calendar-main');
-          if (main) main.style.width = '100%';
-        } catch (e) {}
-      }, 0);
-    }
+    if (typeof window.renderCalendarModuleInto !== 'function') return;
+    window.renderCalendarModuleInto(target);
+    setTimeout(function () {
+      try {
+        var root = target.querySelector('.court-calendar-layout');
+        if (!root) return;
+        var summary = root.querySelector('.calendar-summary');
+        var details = root.querySelector('.next-cases-card');
+        if (summary) summary.remove();
+        if (details) details.remove();
+        root.style.display = 'block';
+        var card = root.querySelector('.court-calendar-card');
+        if (card) card.style.width = '100%';
+        var main = root.querySelector('.calendar-main');
+        if (main) main.style.width = '100%';
+
+        /* Dashboard date cells open the same date in the full Calendar module. */
+        target.querySelectorAll('[data-date]').forEach(function(cell) {
+          cell.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var date = cell.getAttribute('data-date');
+            if (date) {
+              try { window.dashboardCalendarSelectedDate = date; } catch (ignore) {}
+              try { location.hash = 'calendar'; } catch (ignore) {}
+              if (typeof window.navigate === 'function') window.navigate('calendar');
+              setTimeout(function() {
+                try {
+                  if (typeof window.openCalendarDate === 'function') {
+                    window.openCalendarDate(date);
+                  } else if (typeof window.setCalendarSelectedDate === 'function') {
+                    window.setCalendarSelectedDate(date);
+                  }
+                } catch (ignore) {}
+              }, 50);
+            }
+          }, true);
+        });
+      } catch (e) {}
+    }, 0);
   }
 
 
