@@ -243,6 +243,20 @@
     render(target);
   };
 
+  /* Public API used by Dashboard date clicks. It opens the same date in
+     the full Calendar module after SPA navigation. */
+  window.openCalendarDate = date => {
+    const value = String(date || '').slice(0, 10);
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(value)) return;
+    const d = new Date(value + 'T00:00:00');
+    if(Number.isNaN(d.getTime())) return;
+    window.calendarYear = d.getFullYear();
+    window.calendarMonth = d.getMonth();
+    selectedDate = value;
+    selectedRecordKey = null;
+    render();
+  };
+
   window.calendarPrev = () => {
     window.calendarMonth = (window.calendarMonth ?? new Date().getMonth()) - 1;
     if (window.calendarMonth < 0) { window.calendarMonth = 11; window.calendarYear--; }
