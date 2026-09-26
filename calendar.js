@@ -278,88 +278,32 @@
     setTimeout(render, 100);
   }
 
-  /* Dashboard: today's calendar details. */
+  /* Dashboard: show the same month-grid calendar used by the Calendar module.
+     Dashboard intentionally shows only the calendar grid; event detail panels remain
+     available inside the full Calendar module. */
   function renderDashboardTodayCalendarInto(target) {
     if (!target) return;
-
-    const d = readData();
-    const clients = Array.isArray(d.clients) ? d.clients : [];
-    const clientName = id => (clients.find(c => String(c.id) === String(id)) || {}).name || '';
-    const now = new Date();
-    const today = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
-    const all = [];
-
-    (Array.isArray(d.hearings) ? d.hearings : []).forEach((h, i) => {
-      if (String(h.date || '').slice(0, 10) === today) {
-        all.push({...h, kind:'hearing', key:'hearing-' + i, title:h.title || 'Court Hearing',
-          time:h.time || '', caseNo:h.case || '', court:h.court || '', stage:h.stage || '',
-          clientName:clientName(h.clientId)});
-      }
-    });
-
-    (Array.isArray(d.tasks) ? d.tasks : []).forEach((t, i) => {
-      if (String(t.due || t.date || '').slice(0, 10) === today && t.status !== 'Completed') {
-        all.push({...t, kind:'task', key:'task-' + i, title:t.title || 'Task',
-          time:t.time || '', caseNo:t.case || '', stage:t.status || '',
-          priority:t.priority || '', status:t.status || 'Pending'});
-      }
-    });
-
-    (Array.isArray(d.meetings) ? d.meetings : []).forEach((m, i) => {
-      if (String(m.date || '').slice(0, 10) === today) {
-        all.push({...m, kind:'meeting', key:'meeting-' + i, title:m.subject || 'Client Meeting',
-          time:m.time || '', clientName:clientName(m.clientId), mode:m.mode || '',
-          location:m.location || '', agenda:m.agenda || '', details:m.details || ''});
-      }
-    });
-
-    all.sort((a,b) => String(a.time || '').localeCompare(String(b.time || '')));
-
-    const label = now.toLocaleDateString('en-IN',
-      {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-    const icon = e => e.kind === 'hearing' ? '⚖' : e.kind === 'task' ? '✓' : '☏';
-    const type = e => e.kind === 'hearing' ? 'HEARING' : e.kind === 'task' ? 'TASK' : 'MEETING';
-
-    const details = e => {
-      const rows = [['Type', type(e)], ['Date', e.date || e.due || today]];
-      if (e.time) rows.push(['Time', e.time]);
-      if (e.kind === 'hearing') rows.push(['Case Number', e.caseNo], ['Case Title', e.title],
-        ['Client', e.clientName], ['Court', e.court], ['Stage / Purpose', e.stage]);
-      if (e.kind === 'task') rows.push(['Task Subject', e.title], ['Case', e.caseNo],
-        ['Due Date', e.due || e.date], ['Priority', e.priority], ['Status', e.status || e.stage]);
-      if (e.kind === 'meeting') rows.push(['Client', e.clientName], ['Meeting Subject', e.title],
-        ['Mode', e.mode], ['Location / Link', e.location], ['Agenda', e.agenda], ['Details', e.details]);
-
-      return rows.filter(r => r[1] !== undefined && r[1] !== null && String(r[1]) !== '')
-        .map(r => '<div class="calendar-detail-row"><b>' + esc(r[0]) +
-          '</b><span>' + esc(r[1]) + '</span></div>').join('');
-    };
-
-    target.innerHTML =
-      '<div class="dashboard-today-calendar" role="button" tabindex="0" aria-label="Open Calendar module" ' +
-      'onclick="navigate(\'calendar\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){navigate(\'calendar\')}">' +
-        '<div class="dashboard-today-head"><div><div class="dashboard-today-kicker">CALENDAR</div>' +
-          '<h2>Today’s Calendar</h2><p>' + esc(label) + '</p></div>' +
-          '<button class="secondary" onclick="event.stopPropagation();navigate(\'calendar\')">Open Calendar</button></div>' +
-        '<div class="dashboard-today-count"><strong>' + all.length +
-          '</strong><span>records on this date</span></div>' +
-        '<div class="dashboard-today-list">' +
-          (all.length ? all.map(e =>
-            '<section class="dashboard-today-record ' + e.kind + '">' +
-              '<div class="dashboard-today-record-head"><span class="dashboard-today-icon">' + icon(e) +
-              '</span><div><span class="record-type">' + type(e) + '</span><h3>' +
-              esc(e.title) + '</h3><p>' + esc(e.time || 'All day') +
-              (e.kind === 'hearing' && e.court ? ' • ' + esc(e.court) :
-               e.kind === 'meeting' && e.mode ? ' • ' + esc(e.mode) :
-               e.kind === 'task' && e.priority ? ' • ' + esc(e.priority) + ' priority' : '') +
-              '</p></div></div><div class="dashboard-today-details">' +
-              details(e) + '</div></section>').join('') :
-            '<div class="empty">No hearings, tasks or client meetings scheduled for today.</div>') +
-        '</div>' +
-      '</div>';
+    if (typeof window.renderCalendarModuleInto === 'function') {
+      window.renderCalendarModuleInto(target);
+      setTimeout(function () {
+        try {
+          var root = target.querySelector('.court-calendar-layout');
+          if (!root) return;
+          var summary = root.querySelector('.calendar-summary');
+          var details = root.querySelector('.next-cases-card');
+          if (summary) summary.remove();
+          if (details) details.remove();
+          root.style.display = 'block';
+          var card = root.querySelector('.court-calendar-card');
+          if (card) card.style.width = '100%';
+          var main = root.querySelector('.calendar-main');
+          if (main) main.style.width = '100%';
+        } catch (e) {}
+      }, 0);
+    }
   }
 
-  window.renderDashboardTodayCalendarInto = renderDashboardTodayCalendarInto;
+
 
   const dashboardTarget = document.getElementById('dashboard-calendar-module');
   if (dashboardTarget) renderDashboardTodayCalendarInto(dashboardTarget);
