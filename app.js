@@ -362,6 +362,13 @@ function calendarModuleMarkup(date, showBack=true){
   return `<div class="panel same-day-calendar calendar-module-panel"><div class="panel-head"><div><h3>Today's Calendar</h3><span>${label}</span></div>${showBack?`<button class="secondary" onclick="navigate('dashboard')">Back to dashboard</button>`:""}</div><div class="list">${events.length?events.map(e=>`<div class="list-row"><div class="date-box"><b>${e.type==="hearing"?"⚖":e.type==="meeting"?"☏":"✓"}</b><small>${esc(e.type)}</small></div><div class="list-main"><strong>${esc(e.title)}</strong><small>${esc(e.time||"All day")}${e.meta?" • "+esc(e.meta):""}</small></div>${badge(e.type==="hearing"?"Hearing":e.type==="meeting"?"Meeting":"Task")}</div>`).join(""):`<div class="empty">No hearings, meetings or pending tasks scheduled for today.</div>`}</div></div>`;
 }
 function calendar(){
+  /* The Calendar module has its own full month-grid renderer in calendar.js.
+     Always delegate to it when available so SPA navigation cannot fall back
+     to the older same-day calendar markup. */
+  if(typeof window.renderCalendarModuleInto==="function"){
+    window.renderCalendarModuleInto(content);
+    return;
+  }
   const today=new Date().toISOString().slice(0,10);
   content.innerHTML=layout("Calendar","Court hearings, appointments and deadlines")+calendarModuleMarkup(today,true);
 }
