@@ -298,7 +298,8 @@
         if (details) details.remove();
         root.style.display = 'block';
         var card = root.querySelector('.court-calendar-card');
-        if (card) card.style.width = '100%';\n        if (card) card.style.gridTemplateColumns = '1fr';
+        if (card) card.style.width = '100%';
+        if (card) card.style.gridTemplateColumns = '1fr';
         var main = root.querySelector('.calendar-main');
         if (main) main.style.width = '100%';
 
