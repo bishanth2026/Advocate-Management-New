@@ -368,8 +368,8 @@ function calendar(){
   /* The Calendar module has its own full month-grid renderer in calendar.js.
      Always delegate to it when available so SPA navigation cannot fall back
      to the older same-day calendar markup. */
-  if(typeof window.renderCalendarModuleInto==="function"){
-    window.renderCalendarModuleInto(content);
+  if(typeof window.calendar==="function"){
+    window.calendar();
     return;
   }
   const today=new Date().toISOString().slice(0,10);
