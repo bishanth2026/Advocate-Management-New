@@ -167,7 +167,10 @@
       (target ? '' :
         '<div class="page-title"><div><h1>Calendar</h1>' +
         '<p>Hearings, tasks and client meetings</p></div>' +
-        '<button class="primary" onclick="openModal(\'hearing\')">＋ New Hearing</button></div>') +
+        '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">' +
+        '<button class="secondary" onclick="navigate(\'dashboard\')">Back to Dashboard</button>' +
+        '<button class="primary" onclick="openModal(\'hearing\')">＋ New Hearing</button>' +
+        '</div></div>') +
       '<div class="court-calendar-layout">' +
         '<section class="court-calendar-card">' +
           '<div class="calendar-summary">' +
@@ -323,15 +326,11 @@
               try { window.dashboardCalendarSelectedDate = date; } catch (ignore) {}
               try { location.hash = 'calendar'; } catch (ignore) {}
               if (typeof window.navigate === 'function') window.navigate('calendar');
-              setTimeout(function() {
-                try {
-                  if (typeof window.openCalendarDate === 'function') {
-                    window.openCalendarDate(date);
-                  } else if (typeof window.setCalendarSelectedDate === 'function') {
-                    window.setCalendarSelectedDate(date);
-                  }
-                } catch (ignore) {}
-              }, 50);
+              try {
+                if (typeof window.openCalendarDate === 'function') {
+                  window.openCalendarDate(date);
+                }
+              } catch (ignore) {}
             }
           }, true);
         });
