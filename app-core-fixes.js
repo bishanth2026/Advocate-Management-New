@@ -102,7 +102,7 @@
   }, false);
   window.addEventListener('hashchange', function () { window.setTimeout(run, 80); });
   run();
-  window.setInterval(run, 1500);
+  // No polling timer: fixes run on relevant navigation/change events only.
   var style = document.createElement('style');
   style.textContent = 'button,a,[role="button"]{-webkit-tap-highlight-color:transparent;touch-action:manipulation}@media(max-width:900px){.sidebar{transition:transform .2s ease}.sidebar.open{transform:translateX(0)}.mobile-overlay{display:none}.mobile-overlay.open{display:block}.adv-hearing-case-option:focus{background:#eef4ff!important}}';
   document.head.appendChild(style);
