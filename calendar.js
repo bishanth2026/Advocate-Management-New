@@ -281,20 +281,6 @@
     render();
   };
 
-  document.addEventListener('click', function (e) {
-    const b = e.target.closest && e.target.closest('[data-page="calendar"]');
-    if (!b) return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    if (typeof window.navigate === 'function') window.navigate('calendar');
-    render();
-  }, true);
-
-  if (String(location.hash || '').replace(/^#/, '').trim() === 'calendar') {
-    setTimeout(render, 0);
-    setTimeout(render, 100);
-  }
-
   /* Dashboard: show the same month-grid calendar used by the Calendar module.
      Dashboard intentionally shows only the calendar grid; event detail panels remain
      available inside the full Calendar module. */
