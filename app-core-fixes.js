@@ -81,7 +81,7 @@
     if (title) title.textContent = greeting + ', Advocate';
     var subtitle = content.querySelector('.page-title p');
     if (subtitle) subtitle.textContent = now.toLocaleDateString('en-IN', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }) + ' • Demo Workspace';
-    var hearings = Array.isArray(data().hearings) ? data().hearings : [], start = new Date(now); start.setHours(0, 0, 0, 0), end = new Date(start); end.setDate(end.getDate() + 30);
+    var hearings = Array.isArray(data().hearings) ? data().hearings : [], start = new Date(now); start.setHours(0, 0, 0, 0); var end = new Date(start); end.setDate(end.getDate() + 30);
     var count = hearings.filter(function (h) { var d = date(h.date); return d && d >= start && d <= end; }).length;
     var cards = content.querySelectorAll('.stat'), value = cards[1] && cards[1].querySelector('.stat-value');
     if (value) value.textContent = String(count);
