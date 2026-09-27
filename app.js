@@ -96,7 +96,7 @@ const KOZHIKODE_COURTS = [
 ];
 const courtOptions = selected => { const courts=KOZHIKODE_COURTS.slice(); if(selected && !courts.includes(selected)) courts.unshift(selected); return ['<option value="">Select court</option>', ...courts.map(c => `<option value="${esc(c)}" ${c===selected?'selected':''}>${esc(c)}</option>`)].join(''); };
 
-const badge=s=>`<span class="badge ${s==="Active"||s==="Completed"?"green":s==="High"||s==="Reserved"?"gold":s==="Pending"?"blue":"red"}">${s}</span>`;
+const badge=s=>{const label=esc(s);return `<span class="badge ${s==="Active"||s==="Completed"?"green":s==="High"||s==="Reserved"?"gold":s==="Pending"?"blue":"red"}">${label}</span>`};
 const content=document.getElementById("content");
 document.title=(auth.role==="super_admin"?"Super Admin":"Admin")+" — AdvocateDesk";
 
@@ -317,7 +317,7 @@ function sendHearingWhatsApp(index){
 }
 function hearings(){
  content.innerHTML=layout("Hearings","Upcoming court dates and proceedings",`openModal('hearing')`)+
- `<div class="panel"><table id="hearingTable"><thead><tr><th>Date</th><th>Time</th><th>Case</th><th>Client</th><th>Court</th><th>Stage</th><th>Action</th></tr></thead><tbody>${state.hearings.map((h,i)=>{const c=getHearingClient(h);return `<tr><td><strong>${fmtDate(h.date)}</strong></td><td>${h.time}</td><td><strong>${h.case}</strong><br><span class="muted">${h.title}</span></td><td>${c?c.name:"—"}</td><td>${h.court}</td><td>${badge(h.stage)}</td><td><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="secondary" onclick="openEditModal('hearing',${i})">Edit</button><button class="secondary" onclick="sendHearingWhatsApp(${i})">WhatsApp</button></div></td></tr>`}).join("")}</tbody></table></div>`;
+ `<div class="panel"><table id="hearingTable"><thead><tr><th>Date</th><th>Time</th><th>Case</th><th>Client</th><th>Court</th><th>Stage</th><th>Action</th></tr></thead><tbody>${state.hearings.map((h,i)=>{const c=getHearingClient(h);return `<tr><td><strong>${fmtDate(h.date)}</strong></td><td>${esc(h.time)}</td><td><strong>${esc(h.case)}</strong><br><span class="muted">${esc(h.title)}</span></td><td>${c?esc(c.name):"—"}</td><td>${esc(h.court)}</td><td>${badge(h.stage)}</td><td><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="secondary" onclick="openEditModal('hearing',${i})">Edit</button><button class="secondary" onclick="sendHearingWhatsApp(${i})">WhatsApp</button></div></td></tr>`}).join("")}</tbody></table></div>`;
 }
 function clientManagement(){
  const clientOptions=state.clients.map(c=>`<option value="${esc(c.id)}">${esc(c.name)} (${esc(c.phone||"No phone")})</option>`).join("");
@@ -381,7 +381,7 @@ function documents(){
 }
 function tasks(){
  content.innerHTML=layout("Tasks","Work assigned across your practice",`openModal('task')`)+
- `<div class="panel"><table id="taskTable"><thead><tr><th>Task</th><th>Case</th><th>Due</th><th>Priority</th><th>Status</th><th>Action</th></tr></thead><tbody>${state.tasks.map((t,i)=>`<tr><td><strong>${t.title}</strong></td><td>${t.case}</td><td>${fmtDate(t.due)}</td><td>${badge(t.priority)}</td><td>${badge(t.status)}</td><td><button class="secondary" onclick="openEditModal('task',${i})">Edit</button></td></tr>`).join("")}</tbody></table></div>`;
+ `<div class="panel"><table id="taskTable"><thead><tr><th>Task</th><th>Case</th><th>Due</th><th>Priority</th><th>Status</th><th>Action</th></tr></thead><tbody>${state.tasks.map((t,i)=>`<tr><td><strong>${esc(t.title)}</strong></td><td>${esc(t.case)}</td><td>${fmtDate(t.due)}</td><td>${badge(t.priority)}</td><td>${badge(t.status)}</td><td><button class="secondary" onclick="openEditModal('task',${i})">Edit</button></td></tr>`).join("")}</tbody></table></div>`;
 }
 window.selectedFinanceClient=window.selectedFinanceClient||"";
 window.filterFinanceClient=function(value){const typed=String(value||"").trim();const clients=[...new Set(state.invoices.map(x=>x.client||"Unknown Client"))];const exact=clients.find(c=>c.toLowerCase()===typed.toLowerCase());window.selectedFinanceClient=exact||typed;finance();};
