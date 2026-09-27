@@ -509,14 +509,20 @@ const pages={dashboard,"case-client":caseClient,"case-details":caseDetails,cases
 if(auth.role==="super_admin") pages["central-control"]=function(){
  content.innerHTML=layout("Central Control","System-wide administration across all organizations")+`<div class="admin-grid"><div class="admin-card admin-card-super"><div class="admin-card-icon">👑</div><div><h3>Super Admin</h3><p>Full platform-wide control across every organization and law office.</p></div><span class="role-badge">FULL CONTROL</span></div><div class="admin-card admin-card-admin"><div class="admin-card-icon">🛡️</div><div><h3>Admin</h3><p>Office-level control for authorized users, cases, clients and operations.</p></div><span class="role-badge">OFFICE CONTROL</span></div></div><div class="panel central-panel"><div class="panel-head"><div><h3>Organizations & Administrators</h3><span>Central account control</span></div><button class="primary" onclick="addAdminDemo()">＋ Create Admin</button></div><table id="centralControlTable"><thead><tr><th>Organization</th><th>Administrator</th><th>Status</th><th>Access</th></tr></thead><tbody><tr><td><strong>Demo Law Office</strong></td><td>Advocate Admin</td><td>${badge("Active")}</td><td>Office management</td></tr></tbody></table></div><div class="admin-control-grid"><div class="control-tile"><strong>🏢 Organizations</strong><span>Create and manage law offices.</span></div><div class="control-tile"><strong>👥 Users & Roles</strong><span>Control Admin, Advocate, Clerk, Accountant and Staff access.</span></div><div class="control-tile"><strong>🔐 Security</strong><span>Global authentication and security policies.</span></div><div class="control-tile"><strong>📋 Audit Logs</strong><span>Review important administrator activity.</span></div><div class="control-tile"><strong>💾 Data Policies</strong><span>Manage backup and retention policies.</span></div><div class="control-tile"><strong>⚙ System Settings</strong><span>Configure global platform defaults.</span></div></div>`;
 };
-function navigate(page){
+function navigate(page,fromHistory){
   if(!pages[page]) return;
   if(page!=="case-details") window.case360ActiveCaseId=null;
-  // Persist the active SPA route in three layers so a browser refresh never
-  // falls back to Dashboard: URL hash (primary), sessionStorage and localStorage.
+  // Persist the active SPA route so refresh restores the same module. Normal
+  // module clicks create browser history entries; Back/Forward replays them.
   try{sessionStorage.setItem("advocateDeskCurrentPage",page)}catch(e){}
   try{localStorage.setItem("advocateDeskCurrentPage",page)}catch(e){}
-  try{if(location.hash!=="#"+page) history.replaceState(null,"","#"+page)}catch(e){}
+  try{
+    if(location.hash!=="#"+page){
+      if(fromHistory) history.replaceState(null,"","#"+page);
+      else history.pushState(null,"","#"+page);
+    }
+  }catch(e){}
+  if(page!=="reports") document.body.classList.remove("report-mode");
   document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
   pages[page]();
 
@@ -786,14 +792,10 @@ window.__advocateDeskRestoreRoute=function(){
   const initial=pages[saved]?saved:"dashboard";
   navigate(initial);
 };
-// Keep the rendered page synchronized if the browser Back/Forward or another
-// same-page route changes the URL hash.
-window.addEventListener("hashchange",function(){
+// Keep the rendered page synchronized with browser Back/Forward.
+window.addEventListener("popstate",function(){
   const page=String(location.hash||"").replace(/^#/ ,"").trim();
-  if(pages[page] && page!=="dashboard" && page!=="cases" || pages[page]){
-    const active=document.querySelector(".nav-item.active")?.dataset.page;
-    if(active!==page) navigate(page);
-  }
+  if(pages[page]) navigate(page,true);
 });
 // Central Control demo interactions. Supabase will enforce these permissions server-side later.
 document.addEventListener("click", function(e){
