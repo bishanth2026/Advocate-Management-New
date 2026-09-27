@@ -41,8 +41,9 @@ window.addRecord=function(type){
  var ci=document.getElementById('taskClientTypeahead'),ca=document.getElementById('taskCaseTypeahead');
  if(ci&&ci.value.trim()&&!chosenClient){alert('Please select a valid client / party from the dropdown.');return}
  if(ca&&ca.value.trim()&&!chosenCase){alert('Please select a valid case number from the dropdown.');return}
+ if(chosenCase){var originalCase=document.getElementById("f2");if(originalCase)originalCase.value=caseNumber(chosenCase);}
  var r=oldAdd.apply(this,arguments);
- try{var d=data();if(Array.isArray(d.tasks)&&d.tasks.length){var task=d.tasks[0];if(chosenClient){task.clientId=chosenClient.id||'';task.client=clientLabel(chosenClient);task.clientName=clientLabel(chosenClient)}if(chosenCase){task.caseId=chosenCase.id||chosenCase.caseId||caseNumber(chosenCase);task.caseNumber=caseNumber(chosenCase);task.caseTitle=chosenCase.title||chosenCase.caseTitle||''}localStorage.setItem('advocateDeskData',JSON.stringify(d))}}catch(e){}return r;
+ try{var live=window.appState;if(live&&Array.isArray(live.tasks)&&live.tasks.length){var task=live.tasks[0];if(chosenClient){task.clientId=chosenClient.id||"";task.client=clientLabel(chosenClient);task.clientName=clientLabel(chosenClient)}if(chosenCase){task.caseId=chosenCase.id||chosenCase.caseId||caseNumber(chosenCase);task.caseNumber=caseNumber(chosenCase);task.caseTitle=chosenCase.title||chosenCase.caseTitle||""}if(typeof localStorage!=="undefined")localStorage.setItem("advocateDeskData",JSON.stringify(live));}}catch(e){}return r;
 };
 if(window.MutationObserver)new MutationObserver(enhance).observe(document.body,{childList:true,subtree:true});
 })();
