@@ -954,7 +954,7 @@ window.caseDetails=caseDetails360Enhanced;
 
 // Restore the current route only after the enhanced Case 360 page has been
 // registered, so refresh and in-app navigation use the exact same renderer.
-if(window.__advocateDeskRestoreRoute) window.__advocateDeskRestoreRoute();
+/* Route restoration is triggered once, from app.html after every module has loaded. */
 
 
 // Case 360 print/save actions
