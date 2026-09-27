@@ -94,7 +94,7 @@ const KOZHIKODE_COURTS = [
   "Grama Nyayalaya Kunnummal",
   "Grama Nyayalaya Koduvally"
 ];
-const courtOptions = selected => ['<option value="">Select court</option>', ...KOZHIKODE_COURTS.map(c => `<option value="${esc(c)}" ${c===selected?'selected':''}>${esc(c)}</option>`)].join('');
+const courtOptions = selected => { const courts=KOZHIKODE_COURTS.slice(); if(selected && !courts.includes(selected)) courts.unshift(selected); return ['<option value="">Select court</option>', ...courts.map(c => `<option value="${esc(c)}" ${c===selected?'selected':''}>${esc(c)}</option>`)].join(''); };
 
 const badge=s=>`<span class="badge ${s==="Active"||s==="Completed"?"green":s==="High"||s==="Reserved"?"gold":s==="Pending"?"blue":"red"}">${s}</span>`;
 const content=document.getElementById("content");
@@ -590,7 +590,7 @@ function openEditModal(type,index){
  document.getElementById("modalTitle").textContent=`Edit ${type.charAt(0).toUpperCase()+type.slice(1)}`;
  let form="";
  if(type==='client'){
-  form=`<div class="form-grid"><div class="field"><label>Client Name</label><input id="f1" value="${esc(item.name)}"></div><div class="field"><label>Client Role</label><select id="fRole"><option ${item.role==='Petitioner'?'selected':''}>Petitioner</option><option ${item.role==='Respondent'?'selected':''}>Respondent</option><option ${item.role==='Victim'?'selected':''}>Victim</option></select></div><div class="field"><label>Phone / WhatsApp</label><input id="f2" value="${esc(item.phone)}"></div><div class="field"><label>Email</label><input id="f3" value="${esc(item.email)}"></div><div class="field"><label>Status</label><select id="f4"><option ${item.status==='Active'?'selected':''}>Active</option><option ${item.status==='Inactive'?'selected':''}>Inactive</option></select></div></div>`;
+  form=`<div class="form-grid"><div class="field"><label>Client Name</label><input id="f1" value="${esc(item.name)}"></div><div class="field"><label>Client Role</label><select id="fRole">${['Petitioner','Respondent','Victim','Applicant','Accused','Witness','Other'].map(x=>`<option ${x===item.role?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Phone / WhatsApp</label><input id="f2" value="${esc(item.phone)}"></div><div class="field"><label>Email</label><input id="f3" value="${esc(item.email)}"></div><div class="field"><label>Status</label><select id="f4"><option ${item.status==='Active'?'selected':''}>Active</option><option ${item.status==='Inactive'?'selected':''}>Inactive</option></select></div></div>`;
  } else if(type==='case'){
   const linkedIds=Array.isArray(item.clientIds)?item.clientIds:(item.clientId?[item.clientId]:[]);
   const selectedCategory=item.civilCategory||'';
