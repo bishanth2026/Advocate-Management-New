@@ -632,7 +632,11 @@ function updateRecord(type,index){
  if(!item) return;
  if(type==='client'){
   const oldName=item.name; item.name=document.getElementById('f1').value.trim()||oldName; item.role=document.getElementById('fRole').value||'Petitioner'; item.phone=document.getElementById('f2').value.trim()||'—'; item.email=document.getElementById('f3').value.trim()||'—'; item.status=document.getElementById('f4').value;
-  state.cases.forEach(c=>{if(c.clientId===item.id || c.client===oldName){c.client=item.name;c.clientId=item.id;}});
+  state.cases.forEach(c=>{const linked=Array.isArray(c.clientIds)?c.clientIds.includes(item.id):(c.clientId===item.id||c.client===oldName||(Array.isArray(c.clients)&&c.clients.includes(oldName)));if(linked){c.clientId=item.id;c.client=item.name;if(Array.isArray(c.clientIds)&&c.clientIds.length){c.clients=c.clientIds.map(id=>{const x=state.clients.find(cl=>cl.id===id);return x?x.name:"";}).filter(Boolean);c.client=c.clients[0]||item.name;}}});
+  state.invoices.forEach(inv=>{if(inv.clientId===item.id||inv.client===oldName) {inv.clientId=item.id;inv.client=item.name;}});
+  state.tasks.forEach(t=>{if(t.clientId===item.id||t.client===oldName){t.clientId=item.id;t.client=item.name;}});
+  state.meetings.forEach(m=>{if(m.clientId===item.id){m.client=item.name;}});
+  state.discussions.forEach(d=>{if(d.clientId===item.id){d.client=item.name;}});
  } else if(type==='case'){
   const oldNumber=item.number;
   const selectedClientIds=Array.from(document.getElementById('f2').selectedOptions).map(o=>o.value).filter(Boolean);
@@ -645,18 +649,32 @@ function updateRecord(type,index){
   const caseNumber=(parts[0]||'').trim();
   const caseYear=(parts[1]||'').trim();
   const newNumber=(category?category+' ':'')+caseNumberYear;
-  if(!caseNumber||!/^d{4}$/.test(caseYear)){alert('Please enter a valid case number and year, for example 145/2026.');return;}
+  if(!caseNumber||!/^\d{4}$/.test(caseYear)){alert('Please enter a valid case number and year, for example 145/2026.');return;}
   if(state.cases.some((c,i)=>i!==index&&String(c.number||'').trim().toLowerCase()===newNumber.trim().toLowerCase())){alert('A case with this case number already exists.');return;}
   item.number=newNumber||oldNumber; item.title=document.getElementById('f1').value.trim()||'Untitled'; item.client=selectedClients.map(c=>c.name).join(', '); item.clients=selectedClients.map(c=>c.name); item.clientIds=selectedClientIds; item.client=selectedClients[0].name; item.clientId=selectedClientIds[0]; item.court=document.getElementById('f3').value.trim()||'—'; item.next=document.getElementById('f4').value||item.next; item.hearingTime=document.getElementById('f5').value||''; item.type=caseType; item.civilCategory=category; item.caseNumber=caseNumber; item.caseYear=caseYear; item.status=document.getElementById('f9').value;
-  if(oldNumber!==item.number){state.hearings.forEach(h=>{if(h.case===oldNumber) h.case=item.number;});state.tasks.forEach(t=>{if(t.case===oldNumber)t.case=item.number;});}
+  if(oldNumber!==item.number){
+    state.hearings.forEach(h=>{if(h.case===oldNumber||h.caseNumber===oldNumber){h.case=item.number;h.caseNumber=item.number;h.caseId=item.id;}});
+    state.tasks.forEach(t=>{if(t.case===oldNumber||t.caseNumber===oldNumber||t.caseId===item.id){t.case=item.number;t.caseNumber=item.number;t.caseId=item.id;}});
+    state.invoices.forEach(inv=>{if(inv.case===oldNumber||inv.caseNumber===oldNumber||inv.caseId===item.id){inv.case=item.number;inv.caseNumber=item.number;inv.caseId=item.id;}});
+    state.meetings.forEach(m=>{if(m.case===oldNumber||m.caseNumber===oldNumber||m.caseId===item.id){m.case=item.number;m.caseNumber=item.number;m.caseId=item.id;}});
+    state.discussions.forEach(d=>{if(d.case===oldNumber||d.caseNumber===oldNumber||d.caseId===item.id){d.case=item.number;d.caseNumber=item.number;d.caseId=item.id;}});
+  }
   state.clients.forEach(c=>{c.cases=state.cases.filter(x=>(Array.isArray(x.clientIds)?x.clientIds.includes(c.id):x.clientId===c.id)||x.client===c.name||(x.clients||[]).includes(c.name)).length;});
  } else if(type==='hearing'){
   const selectedCaseId=(document.getElementById('f3CaseId')||{}).value||"";
   const relatedCase=state.cases.find(c=>c.id===selectedCaseId); if(!relatedCase){alert('Please select a case.');return;}
   const client=getHearingClient({clientId:relatedCase.clientId,case:relatedCase.number}); if(!client){alert('The selected case is not linked to a client.');return;}
-  item.date=document.getElementById('f1').value||item.date; item.time=document.getElementById('f2').value||item.time; item.case=relatedCase.number; item.title=relatedCase.title; item.court=document.getElementById('f5').value.trim()||relatedCase.court||'Court'; item.stage=document.getElementById('f6').value.trim()||'Hearing'; item.clientId=client.id;
+  item.date=document.getElementById('f1').value||item.date; item.time=document.getElementById('f2').value||item.time; item.case=relatedCase.number; item.caseNumber=relatedCase.number; item.caseId=relatedCase.id; item.title=relatedCase.title; item.court=document.getElementById('f5').value.trim()||relatedCase.court||'Court'; item.stage=document.getElementById('f6').value.trim()||'Hearing'; item.clientId=client.id;
  } else if(type==='task'){
-  item.title=document.getElementById('f1').value.trim()||item.title; item.case=document.getElementById('f2').value.trim()||'—'; item.due=document.getElementById('f3').value||item.due; item.priority=document.getElementById('f4').value; item.status=document.getElementById('f5').value;
+  const typedCase=document.getElementById('f2').value.trim();
+  const relatedCase=state.cases.find(c=>String(c.id)===typedCase||String(c.number)===typedCase||String(c.title)===typedCase||String(c.number+" — "+c.title)===typedCase);
+  if(typedCase && !relatedCase){alert('Please select a valid case.');return;}
+  item.title=document.getElementById('f1').value.trim()||item.title;
+  item.case=relatedCase?relatedCase.number:typedCase||'—';
+  item.caseId=relatedCase?relatedCase.id:(item.caseId||"");
+  item.caseNumber=relatedCase?relatedCase.number:(item.caseNumber||item.case||"");
+  if(relatedCase){item.clientId=relatedCase.clientId||item.clientId;item.client=relatedCase.client||item.client;}
+  item.due=document.getElementById('f3').value||item.due; item.priority=document.getElementById('f4').value; item.status=document.getElementById('f5').value;
  } else if(type==='discussion'){
   const clientId=document.getElementById('f1').value; if(!state.clients.find(c=>c.id===clientId)){alert('Please select a client.');return;}
   item.clientId=clientId; item.date=document.getElementById('f2').value||item.date; item.subject=document.getElementById('f3').value.trim()||'Client Discussion'; item.discussion=document.getElementById('f4').value.trim()||''; item.nextAction=document.getElementById('f5').value.trim()||'';
