@@ -652,13 +652,11 @@ function updateRecord(type,index){
   if(!caseNumber||!/^\d{4}$/.test(caseYear)){alert('Please enter a valid case number and year, for example 145/2026.');return;}
   if(state.cases.some((c,i)=>i!==index&&String(c.number||'').trim().toLowerCase()===newNumber.trim().toLowerCase())){alert('A case with this case number already exists.');return;}
   item.number=newNumber||oldNumber; item.title=document.getElementById('f1').value.trim()||'Untitled'; item.client=selectedClients.map(c=>c.name).join(', '); item.clients=selectedClients.map(c=>c.name); item.clientIds=selectedClientIds; item.client=selectedClients[0].name; item.clientId=selectedClientIds[0]; item.court=document.getElementById('f3').value.trim()||'—'; item.next=document.getElementById('f4').value||item.next; item.hearingTime=document.getElementById('f5').value||''; item.type=caseType; item.civilCategory=category; item.caseNumber=caseNumber; item.caseYear=caseYear; item.status=document.getElementById('f9').value;
-  if(oldNumber!==item.number){
-    state.hearings.forEach(h=>{if(h.case===oldNumber||h.caseNumber===oldNumber){h.case=item.number;h.caseNumber=item.number;h.caseId=item.id;}});
-    state.tasks.forEach(t=>{if(t.case===oldNumber||t.caseNumber===oldNumber||t.caseId===item.id){t.case=item.number;t.caseNumber=item.number;t.caseId=item.id;}});
-    state.invoices.forEach(inv=>{if(inv.case===oldNumber||inv.caseNumber===oldNumber||inv.caseId===item.id){inv.case=item.number;inv.caseNumber=item.number;inv.caseId=item.id;}});
-    state.meetings.forEach(m=>{if(m.case===oldNumber||m.caseNumber===oldNumber||m.caseId===item.id){m.case=item.number;m.caseNumber=item.number;m.caseId=item.id;}});
-    state.discussions.forEach(d=>{if(d.case===oldNumber||d.caseNumber===oldNumber||d.caseId===item.id){d.case=item.number;d.caseNumber=item.number;d.caseId=item.id;}});
-  }
+  state.hearings.forEach(h=>{if(h.caseId===item.id||h.case===oldNumber||h.caseNumber===oldNumber){h.case=item.number;h.caseNumber=item.number;h.caseId=item.id;}});
+  state.tasks.forEach(t=>{if(t.caseId===item.id||t.case===oldNumber||t.caseNumber===oldNumber){t.case=item.number;t.caseNumber=item.number;t.caseId=item.id;}});
+  state.invoices.forEach(inv=>{if(inv.caseId===item.id||inv.case===oldNumber||inv.caseNumber===oldNumber){inv.case=item.number;inv.caseNumber=item.number;inv.caseId=item.id;}});
+  state.meetings.forEach(m=>{if(m.caseId===item.id||m.case===oldNumber||m.caseNumber===oldNumber){m.case=item.number;m.caseNumber=item.number;m.caseId=item.id;}});
+  state.discussions.forEach(d=>{if(d.caseId===item.id||d.case===oldNumber||d.caseNumber===oldNumber){d.case=item.number;d.caseNumber=item.number;d.caseId=item.id;}});
   state.clients.forEach(c=>{c.cases=state.cases.filter(x=>(Array.isArray(x.clientIds)?x.clientIds.includes(c.id):x.clientId===c.id)||x.client===c.name||(x.clients||[]).includes(c.name)).length;});
  } else if(type==='hearing'){
   const selectedCaseId=(document.getElementById('f3CaseId')||{}).value||"";
