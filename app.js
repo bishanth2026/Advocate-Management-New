@@ -37,6 +37,7 @@ state.invoices = Array.isArray(state.invoices) ? state.invoices : [
   {id:"INV-001",date:"2026-09-13",client:"ABC Industries",case:"C-1001",amount:25000,paid:15000,status:"Partial"}
 ];
 const save=()=>localStorage.setItem("advocateDeskData",JSON.stringify(state));
+window.appState=state;
 if(storedData===null) save();
 const fmtDate=d=>new Date(d+"T00:00:00").toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
 const KOZHIKODE_COURTS = [
@@ -510,6 +511,7 @@ if(auth.role==="super_admin") pages["central-control"]=function(){
 };
 function navigate(page){
   if(!pages[page]) return;
+  if(page!=="case-details") window.case360ActiveCaseId=null;
   // Persist the active SPA route in three layers so a browser refresh never
   // falls back to Dashboard: URL hash (primary), sessionStorage and localStorage.
   try{sessionStorage.setItem("advocateDeskCurrentPage",page)}catch(e){}
