@@ -685,7 +685,7 @@ function updateRecord(type,index){
   const advocateFee=Number(document.getElementById('f3').value||0), clerkFee=Number(document.getElementById('f4').value||0), courtFees=Number(document.getElementById('f5').value||0), otherCharges=Number(document.getElementById('f6').value||0), paidAmount=Number(document.getElementById('f7').value||0);
   const amount=advocateFee+clerkFee+courtFees+otherCharges;
   if(!client){alert('Please select a client.');return;} if(!caseValue){alert('Please select a case.');return;} if(amount<=0){alert('Invoice amount must be greater than zero.');return;} if(paidAmount<0||paidAmount>amount){alert('Paid amount cannot exceed the invoice total.');return;}
-  item.client=client; item.case=caseValue; item.advocateFee=advocateFee; item.clerkFee=clerkFee; item.courtFees=courtFees; item.otherCharges=otherCharges; item.amount=amount; item.paid=paidAmount; item.date=document.getElementById('f8').value||item.date; item.status=paidAmount>=amount?'Paid':paidAmount>0?'Partial':'Pending';
+  const invoiceClient=state.clients.find(c=>c.name===client); const invoiceCase=state.cases.find(c=>c.number===caseValue||c.id===caseValue); item.clientId=invoiceClient?.id||item.clientId||""; item.client=client; item.caseId=invoiceCase?.id||item.caseId||""; item.caseNumber=invoiceCase?.number||item.caseNumber||caseValue; item.case=invoiceCase?.number||caseValue; item.advocateFee=advocateFee; item.clerkFee=clerkFee; item.courtFees=courtFees; item.otherCharges=otherCharges; item.amount=amount; item.paid=paidAmount; item.date=document.getElementById('f8').value||item.date; item.status=paidAmount>=amount?'Paid':paidAmount>0?'Partial':'Pending';
   } else if(type==='meeting'){
   const clientId=document.getElementById('f1').value; if(!state.clients.find(c=>c.id===clientId)){alert('Please select a client.');return;}
   item.clientId=clientId; item.date=document.getElementById('f2').value||item.date; item.time=document.getElementById('f3').value||item.time; item.mode=document.getElementById('f4').value||item.mode; item.subject=document.getElementById('f5').value.trim()||'Client Meeting'; item.location=document.getElementById('f6').value.trim()||''; item.agenda=document.getElementById('f7').value.trim()||''; item.details=document.getElementById('f8').value.trim()||'';
@@ -895,8 +895,8 @@ function caseDetails360Enhanced(query="", selectedId="") {
     const byCase=(arr)=>arr.filter(x=>x.caseId===active.id||x.caseNumber===active.number||x.case===active.id||x.case===active.number||x.case===active.title);
     const hearings=byCase(Array.isArray(state.hearings)?state.hearings:[]);
     const tasks=byCase(Array.isArray(state.tasks)?state.tasks:[]);
-    const meetings=byCase(Array.isArray(state.meetings)?state.meetings:[]).filter(m=>!m.clientId||parties.some(p=>p.id===m.clientId));
-    const discussions=byCase(Array.isArray(state.discussions)?state.discussions:[]).filter(d=>!d.clientId||parties.some(p=>p.id===d.clientId));
+    const meetings=byCase(Array.isArray(state.meetings)?state.meetings:[]);
+    const discussions=byCase(Array.isArray(state.discussions)?state.discussions:[]);
     const transactions=byCase(Array.isArray(state.transactions)?state.transactions:[]);
     const invoices=(Array.isArray(state.invoices)?state.invoices:[]).filter(inv=>inv.case===active.id||inv.case===active.number||inv.case===active.title||inv.caseNumber===active.number||inv.caseId===active.id);
     const finance=active.finance||{};
