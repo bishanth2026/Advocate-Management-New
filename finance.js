@@ -21,7 +21,7 @@ input.addEventListener('focus',paint);input.addEventListener('click',paint);inpu
 window.addEventListener('resize',function(){if(active===item&&menu.style.display!=='none')position();});window.addEventListener('scroll',function(){if(active===item&&menu.style.display!=='none')position();},true);
 }
 document.addEventListener('mousedown',function(e){if(active&&!active.wrap.contains(e.target)&&!active.menu.contains(e.target)){active.menu.style.display='none';active=null;}},true);
-function init(){if(!document.body)return;new MutationObserver(mount).observe(document.body,{childList:true,subtree:true});mount();setInterval(mount,300);}
+function init(){if(!document.body)return;new MutationObserver(mount).observe(document.body,{childList:true,subtree:true});mount();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 
