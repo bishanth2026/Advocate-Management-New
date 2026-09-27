@@ -41,6 +41,10 @@ function linksValid(){
  var ci=document.getElementById('taskClientTypeahead'),ca=document.getElementById('taskCaseTypeahead');
  if(ci&&ci.value.trim()&&!chosenClient){alert('Please select a valid client / party from the dropdown.');return false}
  if(ca&&ca.value.trim()&&!chosenCase){alert('Please select a valid case number from the dropdown.');return false}
+ if(chosenCase&&chosenClient){
+  var linked=(Array.isArray(chosenCase.clientIds)&&chosenCase.clientIds.includes(chosenClient.id))||chosenCase.clientId===chosenClient.id||String(chosenCase.client||'').toLowerCase()===String(clientLabel(chosenClient)||'').toLowerCase()||(Array.isArray(chosenCase.clients)&&chosenCase.clients.includes(clientLabel(chosenClient)));
+  if(!linked){alert('Selected case is not linked to the selected client / party.');return false}
+ }
  return true;
 }
 function applyLinks(task){
