@@ -178,8 +178,8 @@ function dashboard(){
 function caseClient(){
  content.innerHTML=layout("All Cases","Manage cases, parties and client relationships",`openModal('case')`)+
  `<div class="toolbar"><input class="filter" id="caseClientFilter" placeholder="Search case number, title, client, phone or court..." oninput="filterTable('caseClientTable',this.value)"></div>
- <div class="panel"><table id="caseClientTable"><thead><tr><th>Case Number</th><th>Case Title</th><th>Parties / Clients</th><th>Court</th><th>Next Hearing</th><th>Status</th><th>Action</th></tr></thead><tbody>${state.cases.map((c,i)=>{const linkedIds=Array.isArray(c.clientIds)?c.clientIds:(c.clientId?[c.clientId]:[]); const parties=state.clients.filter(x=>linkedIds.includes(x.id)||x.name===c.client||((c.clients||[]).includes(x.name)));return `<tr><td><strong>${esc(c.number||'—')}</strong></td><td><strong>${esc(c.title||'—')}</strong></td><td>${parties.length?parties.map(x=>`<div>${esc(x.name)} <span class="muted">(${esc(x.role||'Party')})</span></div>`).join(''):esc(c.client||'—')}</td><td>${esc(c.court||'—')}</td><td>${fmtDate(c.next)}</td><td>${badge(c.status)}</td><td><button class="secondary" onclick="openEditModal('case',${i})">Edit</button></td></tr>`}).join('')}</tbody></table></div>
- <div class="panel" style="margin-top:16px"><div class="panel-head"><div><h3>All Clients / Parties</h3><span class="muted">Search and filter registered clients and parties</span></div><button class="primary" onclick="openModal('client')">＋ Add Client</button></div><div class="toolbar client-search-toolbar" style="display:flex!important;visibility:visible!important;opacity:1!important;align-items:center!important;gap:10px!important;width:100%!important;margin:0 0 15px!important"><div class="client-search-box" style="position:relative;flex:1;min-width:0;display:block!important;visibility:visible!important"><input class="filter" id="clientTableFilter" autocomplete="off" placeholder="Search client name, role, phone, email or ID..." oninput="clientTableFilterLive(this.value)" onfocus="clientTableFilterLive(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();clientTableApplySearch()}"><div id="clientTableSuggestions" class="client-search-suggestions" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:1000;background:#fff;border:1px solid #dbe3f0;border-radius:10px;box-shadow:0 12px 28px rgba(20,40,80,.14);overflow:hidden"></div></div><button class="secondary" type="button" style="display:inline-flex!important;visibility:visible!important;opacity:1!important;align-items:center;justify-content:center;min-width:96px!important" onclick="clientTableApplySearch()">Search</button></div><table id="clientTable"><thead><tr><th>Client</th><th>Role</th><th>Phone</th><th>Email</th><th>Cases</th><th>Status</th><th>Action</th></tr></thead><tbody>${state.clients.map((c,i)=>`<tr><td><strong>${esc(c.name)}</strong><br><span class="muted">${esc(c.id)}</span></td><td>${esc(c.role||'Petitioner')}</td><td>${esc(c.phone||'')}</td><td>${esc(c.email||'')}</td><td>${c.cases||0}</td><td>${badge(c.status)}</td><td><button class="secondary" onclick="openEditModal('client',${i})">Edit</button></td></tr>`).join('')}</tbody></table></div>`;
+ <div class="panel"><table id="caseClientTable"><thead><tr><th>Case Number</th><th>Case Title</th><th>Parties / Clients</th><th>Court</th><th>Next Hearing</th><th>Status</th><th>Action</th></tr></thead><tbody>${state.cases.map((c,i)=>{const linkedIds=Array.isArray(c.clientIds)?c.clientIds:(c.clientId?[c.clientId]:[]); const parties=state.clients.filter(x=>linkedIds.includes(x.id)||x.name===c.client||((c.clients||[]).includes(x.name)));return `<tr><td><strong>${esc(c.number||'—')}</strong></td><td><strong>${esc(c.title||'—')}</strong></td><td>${parties.length?parties.map(x=>`<div>${esc(x.name)} <span class="muted">(${esc(x.role||'Party')})</span></div>`).join(''):esc(c.client||'—')}</td><td>${esc(c.court||'—')}</td><td>${fmtDate(c.next)}</td><td>${badge(c.status)}</td><td><button class="secondary" onclick="openEditModal('case',${i})">Edit</button><button class="secondary" onclick="deleteRecord('case',${i})">Delete</button></td></tr>`}).join('')}</tbody></table></div>
+ <div class="panel" style="margin-top:16px"><div class="panel-head"><div><h3>All Clients / Parties</h3><span class="muted">Search and filter registered clients and parties</span></div><button class="primary" onclick="openModal('client')">＋ Add Client</button></div><div class="toolbar client-search-toolbar" style="display:flex!important;visibility:visible!important;opacity:1!important;align-items:center!important;gap:10px!important;width:100%!important;margin:0 0 15px!important"><div class="client-search-box" style="position:relative;flex:1;min-width:0;display:block!important;visibility:visible!important"><input class="filter" id="clientTableFilter" autocomplete="off" placeholder="Search client name, role, phone, email or ID..." oninput="clientTableFilterLive(this.value)" onfocus="clientTableFilterLive(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();clientTableApplySearch()}"><div id="clientTableSuggestions" class="client-search-suggestions" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:1000;background:#fff;border:1px solid #dbe3f0;border-radius:10px;box-shadow:0 12px 28px rgba(20,40,80,.14);overflow:hidden"></div></div><button class="secondary" type="button" style="display:inline-flex!important;visibility:visible!important;opacity:1!important;align-items:center;justify-content:center;min-width:96px!important" onclick="clientTableApplySearch()">Search</button></div><table id="clientTable"><thead><tr><th>Client</th><th>Role</th><th>Phone</th><th>Email</th><th>Cases</th><th>Status</th><th>Action</th></tr></thead><tbody>${state.clients.map((c,i)=>`<tr><td><strong>${esc(c.name)}</strong><br><span class="muted">${esc(c.id)}</span></td><td>${esc(c.role||'Petitioner')}</td><td>${esc(c.phone||'')}</td><td>${esc(c.email||'')}</td><td>${c.cases||0}</td><td>${badge(c.status)}</td><td><button class="secondary" onclick="openEditModal('client',${i})">Edit</button><button class="secondary" onclick="deleteRecord('client',${i})">Delete</button></td></tr>`).join('')}</tbody></table></div>`;
 }
 
 function clientTableFilterLive(value){
@@ -318,7 +318,7 @@ function sendHearingWhatsApp(index){
 }
 function hearings(){
  content.innerHTML=layout("Hearings","Upcoming court dates and proceedings",`openModal('hearing')`)+
- `<div class="panel"><table id="hearingTable"><thead><tr><th>Date</th><th>Time</th><th>Case</th><th>Client</th><th>Court</th><th>Stage</th><th>Action</th></tr></thead><tbody>${state.hearings.map((h,i)=>{const c=getHearingClient(h);return `<tr><td><strong>${fmtDate(h.date)}</strong></td><td>${esc(h.time)}</td><td><strong>${esc(h.case)}</strong><br><span class="muted">${esc(h.title)}</span></td><td>${c?esc(c.name):"—"}</td><td>${esc(h.court)}</td><td>${badge(h.stage)}</td><td><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="secondary" onclick="openEditModal('hearing',${i})">Edit</button><button class="secondary" onclick="sendHearingWhatsApp(${i})">WhatsApp</button></div></td></tr>`}).join("")}</tbody></table></div>`;
+ `<div class="panel"><table id="hearingTable"><thead><tr><th>Date</th><th>Time</th><th>Case</th><th>Client</th><th>Court</th><th>Stage</th><th>Action</th></tr></thead><tbody>${state.hearings.map((h,i)=>{const c=getHearingClient(h);return `<tr><td><strong>${fmtDate(h.date)}</strong></td><td>${esc(h.time)}</td><td><strong>${esc(h.case)}</strong><br><span class="muted">${esc(h.title)}</span></td><td>${c?esc(c.name):"—"}</td><td>${esc(h.court)}</td><td>${badge(h.stage)}</td><td><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="secondary" onclick="openEditModal('hearing',${i})">Edit</button><button class="secondary" onclick="deleteRecord('hearing',${i})">Delete</button><button class="secondary" onclick="sendHearingWhatsApp(${i})">WhatsApp</button></div></td></tr>`}).join("")}</tbody></table></div>`;
 }
 function clientManagement(){
  const clientOptions=state.clients.map(c=>`<option value="${esc(c.id)}">${esc(c.name)} (${esc(c.phone||"No phone")})</option>`).join("");
@@ -382,7 +382,7 @@ function documents(){
 }
 function tasks(){
  content.innerHTML=layout("Tasks","Work assigned across your practice",`openModal('task')`)+
- `<div class="panel"><table id="taskTable"><thead><tr><th>Task</th><th>Case</th><th>Due</th><th>Priority</th><th>Status</th><th>Action</th></tr></thead><tbody>${state.tasks.map((t,i)=>`<tr><td><strong>${esc(t.title)}</strong></td><td>${esc(t.case)}</td><td>${fmtDate(t.due)}</td><td>${badge(t.priority)}</td><td>${badge(t.status)}</td><td><button class="secondary" onclick="openEditModal('task',${i})">Edit</button></td></tr>`).join("")}</tbody></table></div>`;
+ `<div class="panel"><table id="taskTable"><thead><tr><th>Task</th><th>Case</th><th>Due</th><th>Priority</th><th>Status</th><th>Action</th></tr></thead><tbody>${state.tasks.map((t,i)=>`<tr><td><strong>${esc(t.title)}</strong></td><td>${esc(t.case)}</td><td>${fmtDate(t.due)}</td><td>${badge(t.priority)}</td><td>${badge(t.status)}</td><td><button class="secondary" onclick="openEditModal('task',${i})">Edit</button><button class="secondary" onclick="deleteRecord('task',${i})">Delete</button></td></tr>`).join("")}</tbody></table></div>`;
 }
 window.selectedFinanceClient=window.selectedFinanceClient||"";
 window.filterFinanceClient=function(value){const typed=String(value||"").trim();const clients=[...new Set(state.invoices.map(x=>x.client||"Unknown Client"))];const exact=clients.find(c=>c.toLowerCase()===typed.toLowerCase());window.selectedFinanceClient=exact||typed;finance();};
@@ -694,14 +694,41 @@ function updateRecord(type,index){
  save(); closeModal(); navigate(type==='case'?'cases':type==='client'?'clients':type==='hearing'?'hearings':type==='discussion'||type==='meeting'?'client-management':'tasks');
 }
 function deleteRecord(type,index){
- const key=type==='discussion'?'discussions':type==='meeting'?'meetings':type==='invoice'?'invoices':'';
- if(!key) return;
+ const collections={case:"cases",client:"clients",hearing:"hearings",task:"tasks",discussion:"discussions",meeting:"meetings",invoice:"invoices"};
+ const key=collections[type]; if(!key) return;
  const item=state[key][index]; if(!item) return;
- const label=type==='discussion'?'discussion':type==='meeting'?'meeting':'invoice';
- if(!confirm(`Delete this ${label}? This action cannot be undone.`)) return;
- state[key].splice(index,1);
+ const label=type==="case"?"case":type==="client"?"client":type==="hearing"?"hearing":type==="task"?"task":type==="discussion"?"discussion":type==="meeting"?"meeting":"invoice";
+ let message="Delete this "+label+"? This action cannot be undone.";
+ if(type==="case") message="Delete this case and its directly linked hearings, tasks, invoices, meetings and discussions? This action cannot be undone.";
+ if(type==="client") message="Delete this client and directly linked discussions, meetings, tasks and invoices? This action cannot be undone.";
+ if(!confirm(message)) return;
+ if(type==="case"){
+   const caseId=item.id, caseNumber=item.number;
+   state.hearings=state.hearings.filter(h=>h.caseId!==caseId&&h.caseNumber!==caseNumber&&h.case!==caseId&&h.case!==caseNumber);
+   state.tasks=state.tasks.filter(t=>t.caseId!==caseId&&t.caseNumber!==caseNumber&&t.case!==caseId&&t.case!==caseNumber);
+   state.invoices=state.invoices.filter(inv=>inv.caseId!==caseId&&inv.caseNumber!==caseNumber&&inv.case!==caseId&&inv.case!==caseNumber);
+   state.meetings=state.meetings.filter(m=>m.caseId!==caseId&&m.caseNumber!==caseNumber&&m.case!==caseId&&m.case!==caseNumber);
+   state.discussions=state.discussions.filter(d=>d.caseId!==caseId&&d.caseNumber!==caseNumber&&d.case!==caseId&&d.case!==caseNumber);
+   state.cases.splice(index,1);
+   state.clients.forEach(c=>{c.cases=state.cases.filter(x=>(Array.isArray(x.clientIds)?x.clientIds.includes(c.id):x.clientId===c.id)||x.client===c.name||(x.clients||[]).includes(c.name)).length;});
+ } else if(type==="client"){
+   const clientId=item.id, clientName=item.name;
+   state.discussions=state.discussions.filter(d=>d.clientId!==clientId&&d.client!==clientName);
+   state.meetings=state.meetings.filter(m=>m.clientId!==clientId&&m.client!==clientName);
+   state.tasks=state.tasks.filter(t=>t.clientId!==clientId&&t.client!==clientName);
+   state.invoices=state.invoices.filter(inv=>inv.clientId!==clientId&&inv.client!==clientName);
+   state.hearings.forEach(h=>{if(h.clientId===clientId) h.clientId="";});
+   state.cases.forEach(c=>{
+     if(Array.isArray(c.clientIds)){
+       c.clientIds=c.clientIds.filter(id=>id!==clientId);
+       c.clients=state.clients.filter(cl=>c.clientIds.includes(cl.id)).map(cl=>cl.name);
+       c.client=c.clients[0]||""; c.clientId=c.clientIds[0]||"";
+     } else if(c.clientId===clientId||c.client===clientName){c.clientId="";c.client="";}
+   });
+   state.clients.splice(index,1);
+ } else { state[key].splice(index,1); }
  save();
- navigate(type==='invoice'?'finance':'client-management');
+ navigate(type==="case"||type==="client"?"cases":type==="hearing"?"hearings":type==="task"?"tasks":type==="invoice"?"finance":"client-management");
 }
 function clearHearingCaseSelection(){
   const input=document.getElementById("f3");
