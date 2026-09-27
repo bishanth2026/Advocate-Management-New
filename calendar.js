@@ -326,6 +326,9 @@
 
 
 
+  /* Expose the Dashboard renderer to the SPA navigation layer. */
+  window.renderDashboardTodayCalendarInto = renderDashboardTodayCalendarInto;
+
   const dashboardTarget = document.getElementById('dashboard-calendar-module');
   if (dashboardTarget) renderDashboardTodayCalendarInto(dashboardTarget);
 
