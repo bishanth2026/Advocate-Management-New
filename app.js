@@ -791,7 +791,7 @@ document.addEventListener("click", function(e){
     const tbody=document.getElementById("admin-users-table");
     if(tbody){
       const tr=document.createElement("tr");
-      tr.innerHTML=`<td>${name}</td><td><span class="role-badge">${role}</span></td><td>Main Office</td><td><span class="status-badge active">Active</span></td><td>Assigned by role</td>`;
+      tr.innerHTML=`<td>${esc(name)}</td><td><span class="role-badge">${esc(role)}</span></td><td>Main Office</td><td><span class="status-badge active">Active</span></td><td>Assigned by role</td>`;
       tbody.prepend(tr);
     }
   }
@@ -822,9 +822,11 @@ document.addEventListener("click", function(e){
       if(clientSelect && clientSelect.tagName==='SELECT' && [...clientSelect.options].some(o=>o.value===clientId)) clientSelect.value=clientId;
     }
   }
+  // Do not automatically inject the currently viewed Case 360 case into every
+  // new hearing/task/meeting/discussion. A new record must be independent unless
+  // the user explicitly selects a case in its form.
   window.openModal=function(type){
     originalOpenModal(type);
-    if(['hearing','task','meeting','discussion'].includes(type)) setTimeout(setCaseContext,0);
   };
   window.addRecord=function(type){
     const c=activeCase();
