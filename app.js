@@ -153,7 +153,7 @@ function dashboard(){
   <div class="notice">Demo mode is active. Records are stored in this browser for now. Supabase will be connected in the next phase.</div>
   <div class="cards">
    <div class="stat"><div class="stat-top">Active Cases <span>⚖</span></div><div class="stat-value">${state.cases.filter(x=>x.status==="Active").length}</div><div class="stat-foot">Live case portfolio</div></div>
-   <div class="stat"><div class="stat-top">Upcoming Hearings <span>◷</span></div><div class="stat-value">${state.hearings.length}</div><div class="stat-foot">Next 30 days</div></div>
+   <div class="stat"><div class="stat-top">Upcoming Hearings <span>◷</span></div><div class="stat-value">${upcoming.length}</div><div class="stat-foot">Upcoming hearings</div></div>
    <div class="stat"><div class="stat-top">Clients <span>♙</span></div><div class="stat-value">${state.clients.length}</div><div class="stat-foot">Registered clients</div></div>
    <div class="stat"><div class="stat-top">Pending Tasks <span>✓</span></div><div class="stat-value">${state.tasks.filter(x=>x.status!=="Completed").length}</div><div class="stat-foot">Requires attention</div></div>
   </div>
@@ -812,7 +812,7 @@ if(type==="invoice"){ const advocateFee=Number(document.getElementById("f3").val
   else{alert(`Hearing saved, but ${client.name} does not have a valid WhatsApp/mobile number. Please update the client record.`);}
   return;
  }
- if(type==="task"){state.tasks.unshift({title:document.getElementById("f1").value||"New task",case:document.getElementById("f2").value||"—",due:document.getElementById("f3").value||"2026-09-30",priority:document.getElementById("f4").value,status:document.getElementById("f5")?.value||"Pending"})}
+ if(type==="task"){state.tasks.unshift({title:document.getElementById("f1").value||"New task",case:document.getElementById("f2").value||"—",due:document.getElementById("f3").value||new Date().toISOString().slice(0,10),priority:document.getElementById("f4").value,status:document.getElementById("f5")?.value||"Pending"})}
  if(type==="discussion"){
   const clientId=document.getElementById("f1").value; const client=state.clients.find(c=>c.id===clientId); if(!client){alert("Please select a client.");return;}
   state.discussions.unshift({id:"DISC-"+Date.now(),clientId,date:document.getElementById("f2").value||new Date().toISOString().slice(0,10),subject:document.getElementById("f3").value.trim()||"Client Discussion",discussion:document.getElementById("f4").value.trim()||"",nextAction:document.getElementById("f5").value.trim()||""});
