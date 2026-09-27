@@ -26,7 +26,8 @@ const seed = {
     {title:"Review writ petition",case:"WP 422/2026",due:"2026-09-11",priority:"High",status:"Pending"}
   ]
 };
-const state = JSON.parse(localStorage.getItem("advocateDeskData") || "null") || seed;
+const storedData = localStorage.getItem("advocateDeskData");
+const state = storedData ? (JSON.parse(storedData) || seed) : seed;
 // Backward-compatible collections for the Client Management workspace.
 state.discussions = Array.isArray(state.discussions) ? state.discussions : [];
 state.meetings = Array.isArray(state.meetings) ? state.meetings : [];
@@ -36,6 +37,7 @@ state.invoices = Array.isArray(state.invoices) ? state.invoices : [
   {id:"INV-001",date:"2026-09-13",client:"ABC Industries",case:"C-1001",amount:25000,paid:15000,status:"Partial"}
 ];
 const save=()=>localStorage.setItem("advocateDeskData",JSON.stringify(state));
+if(storedData===null) save();
 const fmtDate=d=>new Date(d+"T00:00:00").toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
 const KOZHIKODE_COURTS = [
   "JFCM Court, Kunnamangalam",
