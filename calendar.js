@@ -349,11 +349,11 @@
     '.court-cal-cell{position:relative;min-height:66px;border:1px solid var(--border,#e2e8f0);border-radius:9px;background:var(--card,#fff);padding:8px;text-align:left;cursor:pointer}' +
     '.court-cal-cell.selected{background:#dbeafe;border:2px solid #60a5fa}.court-cal-cell.today .cal-number{background:#2563eb;color:#fff;border-radius:50%;width:27px;height:27px;display:grid;place-items:center}' +
     '.muted-cell{opacity:.3;cursor:default}.cal-number{font-weight:700;font-size:13px}.cal-count{position:absolute;right:6px;top:6px;font-size:10px;color:#2563eb}' +
-    '.cal-dot{display:inline-block;width:5px;height:5px;border-radius:50%;margin:18px 3px 0 0}.cal-dot.hearing{background:#2563eb}.cal-dot.task{background:#d97706}.cal-dot.meeting{background:#16a34a}' +
+    '.cal-dot{display:inline-block;width:5px;height:5px;border-radius:50%;margin:18px 3px 0 0}.cal-dot.hearing{background:#7c3aed}.cal-dot.task{background:#dc2626}.cal-dot.meeting{background:#2563eb}' +
     '.calendar-legend{display:flex;gap:15px;flex-wrap:wrap;margin-top:17px;font-size:12px}.legend-hearing:before,.legend-task:before,.legend-meeting:before{content:"● "}' +
-    '.legend-hearing{color:#2563eb}.legend-task{color:#b45309}.legend-meeting{color:#15803d}.next-cases-card{padding:24px}' +
+    '.legend-hearing{color:#7c3aed}.legend-task{color:#dc2626}.legend-meeting{color:#2563eb}.next-cases-card{padding:24px}' +
     '.selected-details{display:flex;flex-direction:column;gap:12px}.selected-record{border:1px solid var(--border,#e2e8f0);border-left:4px solid #2563eb;border-radius:12px;padding:14px;background:var(--surface,#f8fafc)}' +
-    '.selected-record.task{border-left-color:#d97706}.selected-record.meeting{border-left-color:#16a34a}.selected-record-head{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}' +
+    '.selected-record.task{border-left-color:#dc2626}.selected-record.meeting{border-left-color:#2563eb}.selected-record-head{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}' +
     '.record-type{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--muted,#64748b)}.selected-record-head strong{font-size:15px;line-height:1.4}' +
     '.calendar-detail-row{display:grid;grid-template-columns:115px minmax(0,1fr);gap:10px;padding:6px 0;border-top:1px solid var(--border,#e2e8f0);font-size:12px;line-height:1.45}' +
     '.calendar-detail-row b{color:var(--muted,#64748b)}.calendar-detail-row span{overflow-wrap:anywhere}.empty{color:var(--muted,#64748b);padding:10px 0}' +
@@ -363,9 +363,9 @@
     '.dashboard-today-head p{margin:0;color:var(--muted,#64748b);font-size:13px}.dashboard-today-count{padding:16px 24px;border-bottom:1px solid var(--border,#e2e8f0);display:flex;align-items:baseline;gap:8px}' +
     '.dashboard-today-count strong{font-size:28px;color:#2563eb}.dashboard-today-count span{font-size:12px;color:var(--muted,#64748b)}' +
     '.dashboard-today-list{padding:18px 24px;display:grid;gap:14px}.dashboard-today-record{border:1px solid var(--border,#e2e8f0);border-left:4px solid #2563eb;border-radius:12px;padding:16px;background:var(--surface,#f8fafc)}' +
-    '.dashboard-today-record.task{border-left-color:#d97706}.dashboard-today-record.meeting{border-left-color:#16a34a}.dashboard-today-record-head{display:flex;gap:12px;align-items:flex-start}' +
+    '.dashboard-today-record.task{border-left-color:#dc2626}.dashboard-today-record.meeting{border-left-color:#2563eb}.dashboard-today-record-head{display:flex;gap:12px;align-items:flex-start}' +
     '.dashboard-today-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:#dbeafe;color:#2563eb;font-size:18px;flex:0 0 auto}' +
-    '.dashboard-today-record.task .dashboard-today-icon{background:#fef3c7;color:#b45309}.dashboard-today-record.meeting .dashboard-today-icon{background:#dcfce7;color:#15803d}' +
+    '.dashboard-today-record.task .dashboard-today-icon{background:#fee2e2;color:#dc2626}.dashboard-today-record.meeting .dashboard-today-icon{background:#dbeafe;color:#2563eb}' +
     '.dashboard-today-record h3{margin:3px 0 2px;font-size:15px}.dashboard-today-record p{margin:0;color:var(--muted,#64748b);font-size:12px}.dashboard-today-details{margin-top:12px}.dashboard-today-details .calendar-detail-row{background:transparent}' +
     '@media(max-width:1050px){.court-calendar-card{grid-template-columns:1fr}.calendar-summary{padding:20px}.summary-total{margin-top:15px}}' +
     '@media(max-width:700px){.court-calendar-layout{grid-template-columns:1fr}.calendar-main{padding:12px}.court-cal-cell{min-height:48px;padding:5px}.cal-dot{margin-top:10px}.next-cases-card{padding:16px}.dashboard-today-head{padding:18px;align-items:flex-start;flex-direction:column}.dashboard-today-list{padding:14px}.dashboard-today-count{padding:14px 18px}}';
