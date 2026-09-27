@@ -515,6 +515,22 @@ function navigate(page){
   try{if(location.hash!=="#"+page) history.replaceState(null,"","#"+page)}catch(e){}
   document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
   pages[page]();
+
+  /* When returning from Calendar (or any other SPA page), rebuild the
+     Dashboard calendar immediately without requiring a browser refresh. */
+  if(page==="dashboard"){
+    const restoreDashboardCalendar=function(){
+      try{
+        const target=document.getElementById("dashboard-calendar-module");
+        if(target && typeof window.renderDashboardTodayCalendarInto==="function"){
+          window.renderDashboardTodayCalendarInto(target);
+        }
+      }catch(e){}
+    };
+    if(typeof window.requestAnimationFrame==="function") window.requestAnimationFrame(restoreDashboardCalendar);
+    else setTimeout(restoreDashboardCalendar,0);
+  }
+
   setMobileMenu(false)
 }
 function addAdminDemo(){alert("Admin creation is a demo action now. Supabase will create the real account securely in the next phase.")}
