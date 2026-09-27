@@ -9,7 +9,7 @@ const seed = {
     {id:"CS-2026-004",number:"OP 71/2025",title:"Shameer v. Amina",client:"Shameer K.",court:"Family Court",next:"2026-09-18",status:"Reserved",type:"Family"}
   ],
   clients:[
-    {id:"CL-001",name:"Abdul Rahman",phone:"9876543210",email:"rahman@example.com",role:"Petitioner",cases:2,status:"Active"},
+    {id:"CL-001",name:"Abdul Rahman",phone:"9876543210",email:"rahman@example.com",role:"Petitioner",cases:1,status:"Active"},
     {id:"CL-002",name:"Fathima P.",phone:"9895001122",email:"fathima@example.com",role:"Respondent",cases:1,status:"Active"},
     {id:"CL-003",name:"ABC Traders",phone:"9847002211",email:"office@abctraders.example",role:"Petitioner",cases:1,status:"Active"},
     {id:"CL-004",name:"Shameer K.",phone:"9961007788",email:"shameer@example.com",role:"Victim",cases:1,status:"Active"}
@@ -33,8 +33,8 @@ state.discussions = Array.isArray(state.discussions) ? state.discussions : [];
 state.meetings = Array.isArray(state.meetings) ? state.meetings : [];
 state.payments = Array.isArray(state.payments) ? state.payments : [];
 state.invoices = Array.isArray(state.invoices) ? state.invoices : [
-  {id:"INV-101",date:"2026-09-13",client:"ABC Industries",case:"C-1001",amount:1000,paid:500,status:"Paid"},
-  {id:"INV-001",date:"2026-09-13",client:"ABC Industries",case:"C-1001",amount:25000,paid:15000,status:"Partial"}
+  {id:"INV-101",date:"2026-09-13",client:"ABC Traders",clientId:"CL-003",case:"WP 422/2026",caseId:"CS-2026-003",caseNumber:"WP 422/2026",amount:1000,paid:500,status:"Partial"},
+  {id:"INV-001",date:"2026-09-13",client:"ABC Traders",clientId:"CL-003",case:"WP 422/2026",caseId:"CS-2026-003",caseNumber:"WP 422/2026",amount:25000,paid:15000,status:"Partial"}
 ];
 const save=()=>localStorage.setItem("advocateDeskData",JSON.stringify(state));
 window.appState=state;
