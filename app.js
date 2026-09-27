@@ -147,7 +147,8 @@ function dashboard(){
   const upcomingMeetings=state.meetings.filter(m=>m.date && new Date(m.date+"T00:00:00")>=today).sort((a,b)=>(String(a.date)+String(a.time||"")).localeCompare(String(b.date)+String(b.time||""))).slice(0,4);
   const upcomingTasks=state.tasks.filter(t=>t.due && t.status!=="Completed" && new Date(t.due+"T00:00:00")>=today).sort((a,b)=>String(a.due).localeCompare(String(b.due))).slice(0,4);
   const meetingClient=(m)=>state.clients.find(c=>c.id===m.clientId);
-  content.innerHTML=layout("Good morning, Advocate","Thursday, 03 September 2026 • Demo Workspace",`openModal('case')`)+
+  const dashDate=today.toLocaleDateString("en-IN",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
+  content.innerHTML=layout("Good morning, Advocate",dashDate+" • Demo Workspace",`openModal('case')`)+
   `<div class="dashboard-hero ${auth.role==="super_admin"?"super-admin-hero":""}" role="img" aria-label="AdvocateDesk ${auth.role==="super_admin"?"Super Admin":"legal practice"} banner"></div>
   <div class="notice">Demo mode is active. Records are stored in this browser for now. Supabase will be connected in the next phase.</div>
   <div class="cards">
