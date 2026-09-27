@@ -592,7 +592,7 @@ function openEditModal(type,index){
  if(type==='client'){
   form=`<div class="form-grid"><div class="field"><label>Client Name</label><input id="f1" value="${esc(item.name)}"></div><div class="field"><label>Client Role</label><select id="fRole">${['Petitioner','Respondent','Victim','Applicant','Accused','Witness','Other'].map(x=>`<option ${x===item.role?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Phone / WhatsApp</label><input id="f2" value="${esc(item.phone)}"></div><div class="field"><label>Email</label><input id="f3" value="${esc(item.email)}"></div><div class="field"><label>Status</label><select id="f4"><option ${item.status==='Active'?'selected':''}>Active</option><option ${item.status==='Inactive'?'selected':''}>Inactive</option></select></div></div>`;
  } else if(type==='case'){
-  const linkedIds=Array.isArray(item.clientIds)?item.clientIds:(item.clientId?[item.clientId]:[]);
+  const linkedIds=Array.isArray(item.clientIds)&&item.clientIds.length?item.clientIds:(item.clientId?[item.clientId]:state.clients.filter(c=>String(item.client||'').split(',').map(v=>v.trim()).includes(c.name)).map(c=>c.id));
   const selectedCategory=item.civilCategory||'';
   const numberPart=item.caseNumber||String(item.number||'').replace(/^(OS|OP|CC|CP|ST|MC)\s+/,'').split('/')[0];
   const yearPart=item.caseYear||String(item.number||'').split('/')[1]||'';
