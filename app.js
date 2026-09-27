@@ -392,7 +392,7 @@ function finance(){
  const outstanding=state.invoices.reduce((sum,x)=>sum+Math.max(0,Number(x.amount||0)-Number(x.paid||0)),0);
  content.innerHTML=layout("Billing & Accounts","Track invoices, client fees and outstanding payments",`openModal('invoice')`)+`<div style="margin:12px 0"><button class="secondary" onclick="openModal('payment')">＋ Record Payment</button></div>`+
  `<div class="cards"><div class="stat"><div class="stat-top">Total Invoiced</div><div class="stat-value">${money(total)}</div><div class="stat-foot">All invoices</div></div><div class="stat"><div class="stat-top">Collected</div><div class="stat-value">${money(paid)}</div><div class="stat-foot">Payments received</div></div><div class="stat"><div class="stat-top">Outstanding</div><div class="stat-value">${money(outstanding)}</div><div class="stat-foot">Receivables</div></div></div>
- <div class="panel"><table><thead><tr><th>Invoice</th><th>Client</th><th>Amount</th><th>Paid</th><th>Status</th><th>Action</th></tr></thead><tbody>${state.invoices.map((x,i)=>`<tr><td><strong>${esc(x.id)}</strong><br><small>${fmtDate(x.date)}</small></td><td>${esc(x.client)}</td><td>${money(x.amount)}</td><td>${money(x.paid)}</td><td>${badge(x.status)}</td><td><div class="table-actions"><button class="secondary" onclick="printInvoice(${i})">Print</button><button class="secondary" onclick="saveInvoice(${i})">Save</button><button class="secondary" onclick="sendInvoiceWhatsApp(${i})">WhatsApp</button></div></td></tr>`).join("")}</tbody></table></div><div class="panel" style="margin-top:18px"><div class="panel-head"><h3>Client-wise Payment Record</h3><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span>Invoice-wise and date-wise payment details</span><input list="finance-client-options" value="${esc(window.selectedFinanceClient||"")}" placeholder="Type client name..." aria-label="Select client by typing" style="min-width:220px" onchange="filterFinanceClient(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();filterFinanceClient(this.value)}"><datalist id="finance-client-options"><option value="">All Clients</option>${[...new Set(state.invoices.map(x=>x.client||"Unknown Client"))].sort((a,b)=>String(a).localeCompare(String(b))).map(client=>`<option value="${esc(client)}"></option>`).join("")}</datalist></div></div><table><thead><tr><th>Client / Invoice</th><th>Invoice Date</th><th>Total Amount</th><th>Paid Amount</th><th>Outstanding</th><th>Status</th></tr></thead><tbody>${(()=>{const grouped={};state.invoices.filter(x=>!window.selectedFinanceClient||(x.client||"Unknown Client")===window.selectedFinanceClient).slice().sort((a,b)=>String(a.client||"").localeCompare(String(b.client||""))||String(a.date||"").localeCompare(String(b.date||""))).forEach(x=>{const k=x.client||"Unknown Client";(grouped[k]||(grouped[k]=[])).push(x);});let out="";Object.keys(grouped).forEach(client=>{const rows=grouped[client];const total=rows.reduce((s,x)=>s+Number(x.amount||0),0);const paid=rows.reduce((s,x)=>s+Number(x.paid||0),0);const outstanding=rows.reduce((s,x)=>s+Math.max(0,Number(x.amount||0)-Number(x.paid||0)),0);out+=`<tr class="client-group-row"><td colspan="6"><strong>${esc(client)}</strong> <small>(${rows.length} invoice${rows.length===1?"":"s"})</small></td></tr>`;out+=rows.map(x=>`<tr><td style="padding-left:28px"><strong>${esc(x.id||"Invoice")}</strong></td><td>${fmtDate(x.date)}</td><td>${money(x.amount)}</td><td>${money(x.paid)}</td><td>${money(Math.max(0,Number(x.amount||0)-Number(x.paid||0)))}</td><td>${badge(x.status||"Pending")}</td></tr>`).join("");out+=`<tr class="client-total-row"><td colspan="2" style="padding-left:28px"><strong>Total for ${esc(client)}</strong></td><td><strong>${money(total)}</strong></td><td><strong>${money(paid)}</strong></td><td><strong>${money(outstanding)}</strong></td><td></td></tr>`;});return out||`<tr><td colspan="6"><div class="empty">No client payment records available.</div></td></tr>`})()}</tbody></table></div><div class="panel" style="margin-top:18px"><div class="panel-head"><h3>Client-wise Payment Received</h3><span>Payments grouped by client and date, with current balance</span></div><table><thead><tr><th>Client / Payment Date</th><th>Invoice</th><th>Payment Method</th><th>Amount Received</th><th>Client Balance</th><th>Reference / Notes</th></tr></thead><tbody>${(()=>{const grouped={};state.payments.filter(p=>!window.selectedFinanceClient||(p.client||"Unknown Client")===window.selectedFinanceClient).slice().sort((a,b)=>String(a.client||"").localeCompare(String(b.client||""))||String(a.date||"").localeCompare(String(b.date||""))).forEach(p=>{const k=p.client||"Unknown Client";(grouped[k]||(grouped[k]=[])).push(p);});let out="";Object.keys(grouped).forEach(client=>{const rows=grouped[client];const invoices=state.invoices.filter(i=>(i.client||"Unknown Client")===client);const balance=invoices.reduce((sum,i)=>sum+Math.max(0,Number(i.amount||0)-Number(i.paid||0)),0);const received=rows.reduce((sum,p)=>sum+Number(p.amount||0),0);out+=`<tr class="client-group-row"><td colspan="6"><strong>${esc(client)}</strong> <small>(${rows.length} payment${rows.length===1?"":"s"})</small></td></tr>`;out+=rows.map(p=>`<tr><td style="padding-left:28px">${fmtDate(p.date)}</td><td>${esc(p.invoiceId||"—")}</td><td>${esc(p.method||"—")}</td><td><strong>${money(p.amount)}</strong></td><td>${money(balance)}</td><td>${esc(p.notes||"—")}</td></tr>`).join("");out+=`<tr class="client-total-row"><td colspan="3" style="padding-left:28px"><strong>Total received — ${esc(client)}</strong></td><td><strong>${money(received)}</strong></td><td><strong>${money(balance)} outstanding</strong></td><td></td></tr>`;});return out||`<tr><td colspan="6"><div class="empty">No payments recorded yet.</div></td></tr>`})()}</tbody></table></div>`;
+ <div class="panel"><table><thead><tr><th>Invoice</th><th>Client</th><th>Amount</th><th>Paid</th><th>Status</th><th>Action</th></tr></thead><tbody>${state.invoices.map((x,i)=>`<tr><td><strong>${esc(x.id)}</strong><br><small>${fmtDate(x.date)}</small></td><td>${esc(x.client)}</td><td>${money(x.amount)}</td><td>${money(x.paid)}</td><td>${badge(x.status)}</td><td><div class="table-actions"><button class="secondary" onclick="openEditModal('invoice',${i})">Edit</button><button class="secondary" onclick="printInvoice(${i})">Print</button><button class="secondary" onclick="saveInvoice(${i})">Save</button><button class="secondary" onclick="sendInvoiceWhatsApp(${i})">WhatsApp</button></div></td></tr>`).join("")}</tbody></table></div><div class="panel" style="margin-top:18px"><div class="panel-head"><h3>Client-wise Payment Record</h3><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span>Invoice-wise and date-wise payment details</span><input list="finance-client-options" value="${esc(window.selectedFinanceClient||"")}" placeholder="Type client name..." aria-label="Select client by typing" style="min-width:220px" onchange="filterFinanceClient(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();filterFinanceClient(this.value)}"><datalist id="finance-client-options"><option value="">All Clients</option>${[...new Set(state.invoices.map(x=>x.client||"Unknown Client"))].sort((a,b)=>String(a).localeCompare(String(b))).map(client=>`<option value="${esc(client)}"></option>`).join("")}</datalist></div></div><table><thead><tr><th>Client / Invoice</th><th>Invoice Date</th><th>Total Amount</th><th>Paid Amount</th><th>Outstanding</th><th>Status</th></tr></thead><tbody>${(()=>{const grouped={};state.invoices.filter(x=>!window.selectedFinanceClient||(x.client||"Unknown Client")===window.selectedFinanceClient).slice().sort((a,b)=>String(a.client||"").localeCompare(String(b.client||""))||String(a.date||"").localeCompare(String(b.date||""))).forEach(x=>{const k=x.client||"Unknown Client";(grouped[k]||(grouped[k]=[])).push(x);});let out="";Object.keys(grouped).forEach(client=>{const rows=grouped[client];const total=rows.reduce((s,x)=>s+Number(x.amount||0),0);const paid=rows.reduce((s,x)=>s+Number(x.paid||0),0);const outstanding=rows.reduce((s,x)=>s+Math.max(0,Number(x.amount||0)-Number(x.paid||0)),0);out+=`<tr class="client-group-row"><td colspan="6"><strong>${esc(client)}</strong> <small>(${rows.length} invoice${rows.length===1?"":"s"})</small></td></tr>`;out+=rows.map(x=>`<tr><td style="padding-left:28px"><strong>${esc(x.id||"Invoice")}</strong></td><td>${fmtDate(x.date)}</td><td>${money(x.amount)}</td><td>${money(x.paid)}</td><td>${money(Math.max(0,Number(x.amount||0)-Number(x.paid||0)))}</td><td>${badge(x.status||"Pending")}</td></tr>`).join("");out+=`<tr class="client-total-row"><td colspan="2" style="padding-left:28px"><strong>Total for ${esc(client)}</strong></td><td><strong>${money(total)}</strong></td><td><strong>${money(paid)}</strong></td><td><strong>${money(outstanding)}</strong></td><td></td></tr>`;});return out||`<tr><td colspan="6"><div class="empty">No client payment records available.</div></td></tr>`})()}</tbody></table></div><div class="panel" style="margin-top:18px"><div class="panel-head"><h3>Client-wise Payment Received</h3><span>Payments grouped by client and date, with current balance</span></div><table><thead><tr><th>Client / Payment Date</th><th>Invoice</th><th>Payment Method</th><th>Amount Received</th><th>Client Balance</th><th>Reference / Notes</th></tr></thead><tbody>${(()=>{const grouped={};state.payments.filter(p=>!window.selectedFinanceClient||(p.client||"Unknown Client")===window.selectedFinanceClient).slice().sort((a,b)=>String(a.client||"").localeCompare(String(b.client||""))||String(a.date||"").localeCompare(String(b.date||""))).forEach(p=>{const k=p.client||"Unknown Client";(grouped[k]||(grouped[k]=[])).push(p);});let out="";Object.keys(grouped).forEach(client=>{const rows=grouped[client];const invoices=state.invoices.filter(i=>(i.client||"Unknown Client")===client);const balance=invoices.reduce((sum,i)=>sum+Math.max(0,Number(i.amount||0)-Number(i.paid||0)),0);const received=rows.reduce((sum,p)=>sum+Number(p.amount||0),0);out+=`<tr class="client-group-row"><td colspan="6"><strong>${esc(client)}</strong> <small>(${rows.length} payment${rows.length===1?"":"s"})</small></td></tr>`;out+=rows.map(p=>`<tr><td style="padding-left:28px">${fmtDate(p.date)}</td><td>${esc(p.invoiceId||"—")}</td><td>${esc(p.method||"—")}</td><td><strong>${money(p.amount)}</strong></td><td>${money(balance)}</td><td>${esc(p.notes||"—")}</td></tr>`).join("");out+=`<tr class="client-total-row"><td colspan="3" style="padding-left:28px"><strong>Total received — ${esc(client)}</strong></td><td><strong>${money(received)}</strong></td><td><strong>${money(balance)} outstanding</strong></td><td></td></tr>`;});return out||`<tr><td colspan="6"><div class="empty">No payments recorded yet.</div></td></tr>`})()}</tbody></table></div>`;
 }
 
 
@@ -585,7 +585,8 @@ window.refreshPaymentInvoices=function(){
  invoiceEl.innerHTML=invoices.length?invoices.map(i=>{const due=Math.max(0,Number(i.amount||0)-Number(i.paid||0));return `<option value="${esc(i.id)}">${esc(i.id)} — ₹${due.toLocaleString("en-IN")} outstanding</option>`;}).join(""): '<option value="">No outstanding invoices for this client</option>';
 };
 function openEditModal(type,index){
- const item=state[type==='case'?'cases':type==='client'?'clients':type==='hearing'?'hearings':type==='task'?'tasks':type==='discussion'?'discussions':'meetings'][index];
+ const key=type==='case'?'cases':type==='client'?'clients':type==='hearing'?'hearings':type==='task'?'tasks':type==='discussion'?'discussions':type==='meeting'?'meetings':'invoices';
+ const item=state[key][index];
  if(!item) return;
  document.getElementById("modalTitle").textContent=`Edit ${type.charAt(0).toUpperCase()+type.slice(1)}`;
  let form="";
@@ -605,6 +606,11 @@ function openEditModal(type,index){
   form=`<div class="form-grid"><div class="field full"><label>Task</label><input id="f1" value="${esc(item.title)}"></div><div class="field"><label>Case</label><input id="f2" value="${esc(item.case)}"></div><div class="field"><label>Due Date</label><input id="f3" type="date" value="${esc(item.due)}"></div><div class="field"><label>Priority</label><select id="f4">${['High','Medium','Low'].map(x=>`<option ${x===item.priority?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Status</label><select id="f5">${['Pending','In Progress','Completed'].map(x=>`<option ${x===item.status?'selected':''}>${x}</option>`).join('')}</select></div></div>`;
  } else if(type==='discussion'){
   form=`<div class="form-grid"><div class="field"><label>Client</label><select id="f1">${state.clients.map(c=>`<option value="${esc(c.id)}" ${c.id===item.clientId?'selected':''}>${esc(c.name)}</option>`).join('')}</select></div><div class="field"><label>Date</label><input id="f2" type="date" value="${esc(item.date)}"></div><div class="field full"><label>Discussion Subject</label><input id="f3" value="${esc(item.subject)}"></div><div class="field full"><label>Discussion Details</label><textarea id="f4">${esc(item.discussion)}</textarea></div><div class="field full"><label>Next Action / Follow-up</label><textarea id="f5">${esc(item.nextAction||'')}</textarea></div></div>`;
+ } else if(type==='invoice'){
+  const clientNames=state.clients.map(c=>c.name);
+  const selectedClient=item.client||'';
+  const caseOptions=state.cases.map(c=>{ const value=c.number||c.id||''; const selected=value===item.case||c.id===item.case||c.number===item.case?'selected':''; return '<option value="'+esc(value)+'" '+selected+'>'+esc(value)+(c.title?' — '+esc(c.title):'')+'</option>'; }).join('');
+  form='<div class="form-grid"><div class="field"><label>Client</label><select id="f1">'+clientNames.map(n=>'<option '+(n===selectedClient?'selected':'')+'>'+esc(n)+'</option>').join('')+'</select></div><div class="field"><label>Case</label><select id="f2">'+caseOptions+'</select></div><div class="field"><label>Advocate Fee</label><input id="f3" type="number" min="0" value="'+Number(item.advocateFee||0)+'"></div><div class="field"><label>Clerk Fee</label><input id="f4" type="number" min="0" value="'+Number(item.clerkFee||0)+'"></div><div class="field"><label>Court Fees</label><input id="f5" type="number" min="0" value="'+Number(item.courtFees||0)+'"></div><div class="field"><label>Other Charges</label><input id="f6" type="number" min="0" value="'+Number(item.otherCharges||0)+'"></div><div class="field"><label>Paid Amount</label><input id="f7" type="number" min="0" value="'+Number(item.paid||0)+'"></div><div class="field"><label>Invoice Date</label><input id="f8" type="date" value="'+esc(item.date||'')+'"></div></div>';
  } else if(type==='meeting'){
   form=`<div class="form-grid"><div class="field"><label>Client</label><select id="f1">${state.clients.map(c=>`<option value="${esc(c.id)}" ${c.id===item.clientId?'selected':''}>${esc(c.name)} — ${esc(c.phone||'No WhatsApp')}</option>`).join('')}</select></div><div class="field"><label>Date</label><input id="f2" type="date" value="${esc(item.date)}"></div><div class="field"><label>Time</label><input id="f3" type="time" value="${esc(item.time)}"></div><div class="field"><label>Meeting Type / Mode</label><select id="f4">${['Office Meeting','Phone Call','Video Call','Other'].map(x=>`<option ${x===item.mode?'selected':''}>${x}</option>`).join('')}</select></div><div class="field full"><label>Meeting Subject</label><input id="f5" value="${esc(item.subject)}"></div><div class="field"><label>Location / Meeting Link</label><input id="f6" value="${esc(item.location||'')}"></div><div class="field"><label>Agenda</label><input id="f7" value="${esc(item.agenda||'')}"></div><div class="field full"><label>Meeting Details</label><textarea id="f8">${esc(item.details||'')}</textarea></div></div>`;
  }
@@ -614,7 +620,7 @@ function openEditModal(type,index){
 }
 function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function updateRecord(type,index){
- const key=type==='case'?'cases':type==='client'?'clients':type==='hearing'?'hearings':type==='task'?'tasks':type==='discussion'?'discussions':'meetings';
+ const key=type==='case'?'cases':type==='client'?'clients':type==='hearing'?'hearings':type==='task'?'tasks':type==='discussion'?'discussions':type==='meeting'?'meetings':'invoices';
  const item=state[key][index];
  if(!item) return;
  if(type==='client'){
@@ -646,7 +652,14 @@ function updateRecord(type,index){
   const clientId=document.getElementById('f1').value; if(!state.clients.find(c=>c.id===clientId)){alert('Please select a client.');return;}
   item.clientId=clientId; item.date=document.getElementById('f2').value||item.date; item.subject=document.getElementById('f3').value.trim()||'Client Discussion'; item.discussion=document.getElementById('f4').value.trim()||''; item.nextAction=document.getElementById('f5').value.trim()||'';
   window.clientManagementSelectedId=clientId;
- } else if(type==='meeting'){
+ } else if(type==='invoice'){
+  const client=document.getElementById('f1').value.trim();
+  const caseValue=document.getElementById('f2').value.trim();
+  const advocateFee=Number(document.getElementById('f3').value||0), clerkFee=Number(document.getElementById('f4').value||0), courtFees=Number(document.getElementById('f5').value||0), otherCharges=Number(document.getElementById('f6').value||0), paidAmount=Number(document.getElementById('f7').value||0);
+  const amount=advocateFee+clerkFee+courtFees+otherCharges;
+  if(!client){alert('Please select a client.');return;} if(!caseValue){alert('Please select a case.');return;} if(amount<=0){alert('Invoice amount must be greater than zero.');return;} if(paidAmount<0||paidAmount>amount){alert('Paid amount cannot exceed the invoice total.');return;}
+  item.client=client; item.case=caseValue; item.advocateFee=advocateFee; item.clerkFee=clerkFee; item.courtFees=courtFees; item.otherCharges=otherCharges; item.amount=amount; item.paid=paidAmount; item.date=document.getElementById('f8').value||item.date; item.status=paidAmount>=amount?'Paid':paidAmount>0?'Partial':'Pending';
+  } else if(type==='meeting'){
   const clientId=document.getElementById('f1').value; if(!state.clients.find(c=>c.id===clientId)){alert('Please select a client.');return;}
   item.clientId=clientId; item.date=document.getElementById('f2').value||item.date; item.time=document.getElementById('f3').value||item.time; item.mode=document.getElementById('f4').value||item.mode; item.subject=document.getElementById('f5').value.trim()||'Client Meeting'; item.location=document.getElementById('f6').value.trim()||''; item.agenda=document.getElementById('f7').value.trim()||''; item.details=document.getElementById('f8').value.trim()||'';
   window.clientManagementSelectedId=clientId;
@@ -799,59 +812,6 @@ document.addEventListener("click", function(e){
 
 /* User profile/logout interactions are handled by user-menu-fix.js. */
 (function(){
-  const originalOpenModal=window.openModal;
-  const originalAddRecord=window.addRecord;
-  function activeCase(){return (state.cases||[]).find(c=>c.id===window.case360ActiveCaseId);}
-  function setCaseContext(){
-    const c=activeCase(); if(!c) return;
-    const caseSelect=document.getElementById('f3');
-    const caseHidden=document.getElementById('f3CaseId');
-    if(caseSelect && caseSelect.tagName==='INPUT' && caseHidden){
-      caseSelect.value=`${c.number||""} — ${c.title||c.client||"Untitled case"}`;
-      caseHidden.value=c.id||"";
-      if(typeof syncHearingCase==='function') syncHearingCase();
-    } else if(caseSelect && caseSelect.tagName==='SELECT' && [...caseSelect.options].some(o=>o.value===c.id)){
-      caseSelect.value=c.id;
-      if(typeof syncHearingCase==='function') syncHearingCase();
-    }
-    const taskCase=document.getElementById('f2');
-    if(taskCase && taskCase.tagName==='INPUT') taskCase.value=c.number||c.title||'';
-    const clientId=c.clientId || (Array.isArray(c.clientIds)?c.clientIds[0]:'');
-    if(clientId){
-      const clientSelect=document.getElementById('f1');
-      if(clientSelect && clientSelect.tagName==='SELECT' && [...clientSelect.options].some(o=>o.value===clientId)) clientSelect.value=clientId;
-    }
-  }
-  // Do not automatically inject the currently viewed Case 360 case into every
-  // new hearing/task/meeting/discussion. A new record must be independent unless
-  // the user explicitly selects a case in its form.
-  window.openModal=function(type){
-    originalOpenModal(type);
-  };
-  window.addRecord=function(type){
-    const c=activeCase();
-    if(c && type==='hearing'){
-      const oldPush=state.hearings.push.bind(state.hearings);
-      state.hearings.push=function(item){item.caseId=c.id;item.caseNumber=c.number;return oldPush(item)};
-      try{return originalAddRecord(type)}finally{state.hearings.push=oldPush;}
-    }
-    if(c && type==='task'){
-      const oldUnshift=state.tasks.unshift.bind(state.tasks);
-      state.tasks.unshift=function(item){item.caseId=c.id;item.caseNumber=c.number;return oldUnshift(item)};
-      try{return originalAddRecord(type)}finally{state.tasks.unshift=oldUnshift;}
-    }
-    if(c && type==='meeting'){
-      const oldPush=state.meetings.push.bind(state.meetings);
-      state.meetings.push=function(item){item.caseId=c.id;item.caseNumber=c.number;return oldPush(item)};
-      try{return originalAddRecord(type)}finally{state.meetings.push=oldPush;}
-    }
-    if(c && type==='discussion'){
-      const oldUnshift=state.discussions.unshift.bind(state.discussions);
-      state.discussions.unshift=function(item){item.caseId=c.id;item.caseNumber=c.number;return oldUnshift(item)};
-      try{return originalAddRecord(type)}finally{state.discussions.unshift=oldUnshift;}
-    }
-    return originalAddRecord(type);
-  };
   const originalCaseDetails=window.caseDetails;
   window.caseDetails=function(q,id){window.case360ActiveCaseId=id||window.case360ActiveCaseId;return originalCaseDetails(q,id);};
 })();
