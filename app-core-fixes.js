@@ -70,7 +70,11 @@
     });
   }
   function dashboardFix() {
-    var content = document.getElementById('content'); if (!content || !content.querySelector('.cards')) return;
+    var content = document.getElementById('content');
+    var dashboardNav = document.querySelector('.nav-item[data-page="dashboard"].active');
+    /* Finance and other modules also use .cards. Only apply Dashboard greeting fixes
+       when Dashboard is actually the active SPA page. */
+    if (!dashboardNav || !content || !content.querySelector('.cards')) return;
     var now = new Date(), hour = now.getHours();
     var greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
     var title = content.querySelector('.page-title h1');
