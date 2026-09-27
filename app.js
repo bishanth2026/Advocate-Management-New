@@ -100,7 +100,7 @@ const badge=s=>{const label=esc(s);return `<span class="badge ${s==="Active"||s=
 const content=document.getElementById("content");
 document.title=(auth.role==="super_admin"?"Super Admin":"Admin")+" — AdvocateDesk";
 
-document.querySelector(".user-chip").innerHTML=`${auth.role==="super_admin"?"👑":"A"} <span>${auth.name}</span> ▾`;
+document.querySelector(".user-chip").innerHTML=`${auth.role==="super_admin"?"👑":"A"} <span>${esc(auth.name)}</span> ▾`;
 if(auth.role!=="super_admin"){document.querySelectorAll(".admin-only").forEach(el=>el.remove())}
 
 
